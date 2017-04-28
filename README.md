@@ -4,9 +4,17 @@ Install NeoVim first
 --------------------
 https://github.com/neovim/neovim
 
+Clone Repository
+-------------------
+```
+git clone https://github.com/Faianca/dotfiles
+```
+
 Run the install script
 --------------
 ```
 ./install
 ```
+
+Enjoy
 
