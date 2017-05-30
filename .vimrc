@@ -1,4 +1,4 @@
-" vim: set foldmethod=marker foldlevel=0:
+" vim: set foldmethod=marker foldlevel=-1:
 " ============================================================================
 
 " Vim 8 defaults
@@ -23,7 +23,6 @@ endif
 Plug 'junegunn/vim-easy-align',       { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
 Plug 'junegunn/vim-github-dashboard', { 'on': ['GHDashboard', 'GHActivity']      }
 Plug 'junegunn/vim-emoji'
-Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-slash'
 Plug 'junegunn/vim-fnr'
 Plug 'junegunn/vim-peekaboo'
@@ -35,6 +34,7 @@ Plug 'junegunn/vader.vim',  { 'on': 'Vader', 'for': 'vader' }
 Plug 'junegunn/fzf',        { 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/rainbow_parentheses.vim'
+
 if v:version >= 703
   Plug 'junegunn/vim-after-object'
 endif
@@ -43,10 +43,18 @@ if s:darwin
 endif
 unlet! g:plug_url_format
 
+Plug 'vim-airline/vim-airline'
+
 " Colors
 Plug 'tomasr/molokai'
 Plug 'chriskempson/vim-tomorrow-theme'
 Plug 'AlessandroYorba/Monrovia'
+Plug 'freeo/vim-kalisi'
+Plug 'mhartington/oceanic-next'
+Plug 'morhetz/gruvbox'
+Plug 'gosukiwi/vim-atom-dark'
+Plug 'altercation/vim-colors-solarized'
+Plug 'vim-airline/vim-airline-themes'
 
 " Edit
 Plug 'tpope/vim-repeat'
@@ -59,6 +67,9 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'rhysd/vim-grammarous'
 Plug 'beloglazov/vim-online-thesaurus'
 Plug 'jlanzarotta/bufexplorer'
+Plug 'Chiel92/vim-autoformat'
+Plug 'posva/vim-vue'
+Plug 'jiangmiao/auto-pairs'
 
 function! BuildYCM(info)
   if a:info.status == 'installed' || a:info.force
@@ -85,9 +96,6 @@ augroup nerd_loader
         \| endif
 augroup END
 
-if v:version >= 703
-  Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle'      }
-endif
 Plug 'justinmk/vim-gtfo'
 
 " Git
@@ -101,24 +109,20 @@ Plug 'christoomey/vim-system-copy'
 " Lang
 if v:version >= 703
   Plug 'kovisoft/paredit', { 'for': 'clojure' }
-  Plug 'junegunn/vim-fireplace', { 'for': 'clojure' }
   Plug 'guns/vim-clojure-static'
   Plug 'guns/vim-clojure-highlight'
   Plug 'guns/vim-slamhound'
   Plug 'venantius/vim-cljfmt'
 endif
 
+Plug 'martinda/Jenkinsfile-vim-syntax'
 Plug 'tpope/vim-bundler'
 Plug 'groenewege/vim-less'
 Plug 'pangloss/vim-javascript'
 Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'mxw/vim-jsx'
-Plug 'kchmck/vim-coffee-script'
 Plug 'slim-template/vim-slim'
 Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'rust-lang/rust.vim'
-Plug 'tpope/vim-rails',      { 'for': []      }
-Plug 'derekwyatt/vim-scala'
 Plug 'honza/dockerfile.vim'
 Plug 'solarnz/thrift.vim'
 Plug 'dag/vim-fish'
@@ -126,8 +130,10 @@ Plug 'chrisbra/unicode.vim', { 'for': 'journal' }
 Plug 'octol/vim-cpp-enhanced-highlight'
 
 " Lint
+Plug 'editorconfig/editorconfig-vim'
 Plug 'metakirby5/codi.vim'
-Plug 'w0rp/ale', { 'on': 'ALEEnable', 'for': ['ruby', 'sh'] }
+Plug 'neomake/neomake'
+" Plug 'w0rp/ale', { 'on': 'ALEEnable', 'for': ['javascript', 'sh'] }
 
 call plug#end()
 endif
@@ -137,7 +143,13 @@ endif
 " BASIC SETTINGS {{{
 " ============================================================================
 
-let mapleader      = ' '
+" Allow us to use Ctrl-s and Ctrl-q as keybinds
+silent!stty - ixon
+
+  " Restore default behaviour when leaving Vim.
+autocmd VimLeave * silent!stty ixon
+
+let mapleader = ' '
 let maplocalleader = ' '
 
 augroup vimrc
@@ -188,6 +200,17 @@ set completeopt=menuone,preview
 set nocursorline
 set nrformats=hex
 silent! set cryptmethod=blowfish2
+
+set background=dark
+let g:solarized_termcolors=256
+
+autocmd! BufWritePost * Neomake
+let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
+
+highlight NeomakeErrorMsg ctermfg=227 ctermbg=237
+let g:neomake_warning_sign = { 'text': '⚠', 'texthl': 'NeomakeErrorMsg' }
+let g:neomake_error_sign = { 'text': 'E>', 'texthl': 'ErrorMsg' }
 
 "" JAVASCRIPT
 let g:used_javascript_libs = 'jquery,ramda,chai,lo-dash,underscore,react,vue'
@@ -331,7 +354,7 @@ endif
 
 " Shift-tab on GNU screen
 " http://superuser.com/questions/195794/gnu-screen-shift-tab-issue
-set t_kB=[Z
+set t_kB=	
 
 " set complete=.,w,b,u,t
 set complete-=i
@@ -369,6 +392,9 @@ endif
 " Basic mappings
 " ----------------------------------------------------------------------------
 
+" Beautifier
+" map < C - f >:call JsBeautify() < cr >
+
 noremap <C-F> <C-D>
 noremap <C-B> <C-U>
 
@@ -394,13 +420,6 @@ nnoremap <C-p> <C-i>
 
 " <C-n> | NERD Tree
 nnoremap <C-n> :NERDTreeToggle<cr>
-
-" <F11> | Tagbar
-if v:version >= 703
-  inoremap <F11> <esc>:TagbarToggle<cr>
-  nnoremap <F11> :TagbarToggle<cr>
-  let g:tagbar_sort = 0
-endif
 
 " jk | Escaping!
 inoremap jk <Esc>
@@ -1721,3 +1740,4 @@ endif
 
 " }}}
 " ============================================================================
+
