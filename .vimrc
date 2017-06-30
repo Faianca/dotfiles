@@ -55,6 +55,7 @@ Plug 'morhetz/gruvbox'
 Plug 'gosukiwi/vim-atom-dark'
 Plug 'altercation/vim-colors-solarized'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'rakr/vim-one'
 
 " Edit
 Plug 'tpope/vim-repeat'
@@ -70,13 +71,8 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'Chiel92/vim-autoformat'
 Plug 'posva/vim-vue'
 Plug 'jiangmiao/auto-pairs'
-
-function! BuildYCM(info)
-  if a:info.status == 'installed' || a:info.force
-    !./install.py --clang-completer --gocode-completer
-  endif
-endfunction
-Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }
+Plug 'Valloric/YouCompleteMe'
+Plug 'maksimr/vim-jsbeautify'
 
 " Plug 'SirVer/ultisnips', { 'on': '#InsertEnter' }
 " Plug 'honza/vim-snippets'
@@ -107,6 +103,7 @@ endif
 Plug 'christoomey/vim-system-copy'
 
 " Lang
+
 if v:version >= 703
   Plug 'kovisoft/paredit', { 'for': 'clojure' }
   Plug 'guns/vim-clojure-static'
@@ -133,6 +130,8 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'metakirby5/codi.vim'
 Plug 'neomake/neomake'
+Plug 'stephpy/vim-php-cs-fixer'
+
 " Plug 'w0rp/ale', { 'on': 'ALEEnable', 'for': ['javascript', 'sh'] }
 
 call plug#end()
@@ -204,13 +203,15 @@ silent! set cryptmethod=blowfish2
 set background=dark
 let g:solarized_termcolors=256
 
-autocmd! BufWritePost * Neomake
+" autocmd! BufWritePost * Neomake
 let g:neomake_javascript_enabled_makers = ['eslint']
 let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
 
 highlight NeomakeErrorMsg ctermfg=227 ctermbg=237
 let g:neomake_warning_sign = { 'text': '⚠', 'texthl': 'NeomakeErrorMsg' }
 let g:neomake_error_sign = { 'text': 'E>', 'texthl': 'ErrorMsg' }
+
+"" PHP
 
 "" JAVASCRIPT
 let g:used_javascript_libs = 'jquery,ramda,chai,lo-dash,underscore,react,vue'
@@ -354,7 +355,7 @@ endif
 
 " Shift-tab on GNU screen
 " http://superuser.com/questions/195794/gnu-screen-shift-tab-issue
-set t_kB=	
+set t_kB=[Z
 
 " set complete=.,w,b,u,t
 set complete-=i
@@ -1740,4 +1741,3 @@ endif
 
 " }}}
 " ============================================================================
-
