@@ -1,54 +1,28 @@
-" vim: set foldmethod=marker foldlevel=-1:
-" ============================================================================
-
-" Vim 8 defaults
+" Vimdeoplete
 unlet! skip_defaults_vim
-silent! source $VIMRUNTIME/defaults.vim
 
 let s:darwin = has('mac')
 
-" }}}
 " ============================================================================
 " VIM-PLUG BLOCK {{{
 " ============================================================================
 
 silent! if plug#begin('~/.vim/plugged')
 
-if s:darwin
-  let g:plug_url_format = 'git@github.com:%s.git'
-else
-  let $GIT_SSL_NO_VERIFY = 'true'
-endif
+let $GIT_SSL_NO_VERIFY = 'true'
 
-Plug 'junegunn/vim-easy-align',       { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
-Plug 'junegunn/vim-github-dashboard', { 'on': ['GHDashboard', 'GHActivity']      }
-Plug 'junegunn/vim-emoji'
-Plug 'junegunn/vim-slash'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'junegunn/vim-fnr'
-Plug 'junegunn/vim-peekaboo'
-Plug 'junegunn/vim-journal'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/gv.vim'
-Plug 'junegunn/limelight.vim'
-Plug 'junegunn/vader.vim',  { 'on': 'Vader', 'for': 'vader' }
 Plug 'junegunn/fzf',        { 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/rainbow_parentheses.vim'
-
-if v:version >= 703
-  Plug 'junegunn/vim-after-object'
-endif
-if s:darwin
-  Plug 'junegunn/vim-xmark'
-endif
-unlet! g:plug_url_format
-
 Plug 'vim-airline/vim-airline'
 
 " Colors
 Plug 'tomasr/molokai'
 Plug 'chriskempson/vim-tomorrow-theme'
-Plug 'AlessandroYorba/Monrovia'
 Plug 'freeo/vim-kalisi'
 Plug 'mhartington/oceanic-next'
 Plug 'morhetz/gruvbox'
@@ -58,6 +32,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'rakr/vim-one'
 
 " Edit
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-endwise'
@@ -73,6 +48,9 @@ Plug 'posva/vim-vue'
 Plug 'jiangmiao/auto-pairs'
 Plug 'Valloric/YouCompleteMe'
 Plug 'maksimr/vim-jsbeautify'
+Plug 'heavenshell/vim-jsdoc'
+" Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
+
 
 " Plug 'SirVer/ultisnips', { 'on': '#InsertEnter' }
 " Plug 'honza/vim-snippets'
@@ -94,24 +72,10 @@ augroup END
 
 Plug 'justinmk/vim-gtfo'
 
-" Git
-Plug 'tpope/vim-fugitive'
-if v:version >= 703
-  Plug 'mhinz/vim-signify'
-endif
-
 Plug 'christoomey/vim-system-copy'
 
 " Lang
-
-if v:version >= 703
-  Plug 'kovisoft/paredit', { 'for': 'clojure' }
-  Plug 'guns/vim-clojure-static'
-  Plug 'guns/vim-clojure-highlight'
-  Plug 'guns/vim-slamhound'
-  Plug 'venantius/vim-cljfmt'
-endif
-
+Plug 'evidens/vim-twig'
 Plug 'martinda/Jenkinsfile-vim-syntax'
 Plug 'tpope/vim-bundler'
 Plug 'groenewege/vim-less'
@@ -125,23 +89,30 @@ Plug 'solarnz/thrift.vim'
 Plug 'dag/vim-fish'
 Plug 'chrisbra/unicode.vim', { 'for': 'journal' }
 Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'vim-scripts/groovyindent-unix'
+Plug 'heavenshell/vim-jsdoc'
+Plug 'tell-k/vim-autopep8'
+Plug 'leafgarland/typescript-vim'
+Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+Plug 'Shougo/denite.nvim'
+Plug 'Shougo/echodoc.vim'
+Plug 'StanAngeloff/php.vim'
+Plug 'digitaltoad/vim-pug'
 
-" Lint
 Plug 'editorconfig/editorconfig-vim'
+" Lint
 Plug 'metakirby5/codi.vim'
-Plug 'neomake/neomake'
-Plug 'stephpy/vim-php-cs-fixer'
-
-" Plug 'w0rp/ale', { 'on': 'ALEEnable', 'for': ['javascript', 'sh'] }
 
 call plug#end()
 endif
+
+filetype plugin indent on
 
 " }}}
 " ============================================================================
 " BASIC SETTINGS {{{
 " ============================================================================
-
+"
 " Allow us to use Ctrl-s and Ctrl-q as keybinds
 silent!stty - ixon
 
@@ -202,6 +173,7 @@ silent! set cryptmethod=blowfish2
 
 set background=dark
 let g:solarized_termcolors=256
+let g:ycm_server_python_interpreter='/usr/bin/python2.7'
 
 " autocmd! BufWritePost * Neomake
 let g:neomake_javascript_enabled_makers = ['eslint']
@@ -210,6 +182,12 @@ let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which esl
 highlight NeomakeErrorMsg ctermfg=227 ctermbg=237
 let g:neomake_warning_sign = { 'text': '⚠', 'texthl': 'NeomakeErrorMsg' }
 let g:neomake_error_sign = { 'text': 'E>', 'texthl': 'ErrorMsg' }
+
+"" GO LANG
+let g:go_fmt_command = "goimports"
+let g:go_metalinter_autosave = 1
+let g:go_metalinter_autosave_enabled = ['vet', 'golint', 'errcheck']
+let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
 
 "" PHP
 
@@ -224,12 +202,6 @@ if has('patch-7.4.338')
   let &showbreak = '↳ '
   set breakindent
   set breakindentopt=sbr
-endif
-
-if has('termguicolors')
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors
 endif
 
 " %< Where to truncate
@@ -377,12 +349,7 @@ if exists('&fixeol')
   set nofixeol
 endif
 
-if has('gui_running')
-  set guifont=Menlo:h14 columns=80 lines=40
-  silent! colo seoul256-light
-else
-  silent! colo seoul256
-endif
+silent! colo seoul256
 
 " }}}
 " ============================================================================
@@ -1716,6 +1683,16 @@ augroup vimrc
     au InsertLeave * if !pumvisible() && (!exists('*getcmdwintype') || empty(getcmdwintype())) | pclose | endif
   endif
 
+augroup END
+
+function! PhpSyntaxOverride()
+  hi! def link phpDocTags  phpDefine
+  hi! def link phpDocParam phpType
+endfunction
+
+augroup phpSyntaxOverride
+  autocmd!
+  autocmd FileType php call PhpSyntaxOverride()
 augroup END
 
 " ----------------------------------------------------------------------------
